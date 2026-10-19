@@ -1,0 +1,79 @@
+# =====================================================================
+# 1. SIMPLE RULE-BASED CHATBOT
+# =====================================================================
+def chatbot_response_rules(user_input):
+    user_input = user_input.lower()
+    if "hello" in user_input or "hi" in user_input:
+        return "Hello! How can I help you today?"
+    elif "order" in user_input:
+        return "Sure, can you provide your order ID?"
+    elif "bye" in user_input:
+        return "Goodbye! Have a great day."
+    else:
+        return "I'm not sure I understand. Could you rephrase?"
+
+def run_rule_based_chat():
+    print("Chatbot (Rules): Hi, I'm your rule-based assistant! (Type 'quit' to exit)")
+    while True:
+        user_text = input("You: ")
+        if user_text.lower() in ["quit", "exit"]:
+            print("Chatbot (Rules): Goodbye!")
+            break
+        response = chatbot_response_rules(user_text)
+        print("Chatbot (Rules):", response)
+
+# =====================================================================
+# 2. NLTK RULE-BASED CHATBOT
+# =====================================================================
+import nltk
+from nltk.chat.util import Chat, reflections
+
+# Define pairs of patterns and responses
+pairs = [
+    [r"hi|hello", ["Hello! How can I assist you today?"]],
+    [r"my name is (.*)", ["Nice to meet you, %1!"]],
+    [r"what is your name?", ["I'm a simple chatbot built in Python."]],
+    [r"how are you?", ["I'm doing great, thanks for asking!"]],
+    [r"quit", ["Goodbye! Have a nice day."]]
+]
+
+def run_nltk_chat():
+    print("Chatbot (NLTK): Starting NLTK Chatbot session. (Type 'quit' to exit)")
+    chatbot = Chat(pairs, reflections)
+    chatbot.converse()
+
+# =====================================================================
+# 3. OPENAI API-BASED CHATBOT (Template)
+# =====================================================================
+from openai import OpenAI
+
+def run_openai_chat(api_key="your_api_key"):
+    if api_key == "your_api_key":
+        print("Skipping OpenAI execution: Please provide a valid API key first.")
+        return
+
+    client = OpenAI(api_key=api_key)
+    messages = [
+        {"role": "system", "content": "You are a supportive mental health assistant. Be empathetic, do not give medical advice, and encourage seeking help if needed."}
+    ]
+
+    print("Chatbot (OpenAI): Connected. (Type 'quit' to exit)")
+    while True:
+        user_input = input("You: ")
+        if user_input.lower() in ["quit", "exit"]:
+            print("Chatbot (OpenAI): Goodbye!")
+            break
+            
+        messages.append({"role": "user", "content": user_input})
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=messages
+        )
+        reply = response.choices[0].message.content
+        print("Bot:", reply)
+        messages.append({"role": "assistant", "content": reply})
+
+# Uncomment the helper you want to run:
+# run_rule_based_chat()
+# run_nltk_chat()
+# run_openai_chat(api_key="your_api_key")
